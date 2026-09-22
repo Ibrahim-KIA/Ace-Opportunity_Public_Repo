@@ -58,7 +58,8 @@ npm run dev
 
 ## Team
 
-- Ibrahim (Ibrahim-KIA)
+- Ibrahim ([@Ibrahim-KIA](https://github.com/Ibrahim-KIA)) — Engineering & Technical Lead
+- Ibukunoluwa Omidiji — Product, Strategy & Research
 
 ## License
 
