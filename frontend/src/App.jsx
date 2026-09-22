@@ -27,7 +27,7 @@ export default function App() {
   return (
     <div className="container">
       <header>
-        <h1 className="logo">NextStep</h1>
+        <h1 className="logo">Ace-Opportunity</h1>
         <p className="tagline">
           AI copilot that matches your CV to real internships, scholarships and grants.
         </p>

@@ -1,1 +1,1 @@
-# NextStep core package
+# Ace-Opportunity core package

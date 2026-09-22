@@ -18,5 +18,5 @@ def _get_client() -> AsyncIOMotorClient:
 
 
 def get_database() -> AsyncIOMotorDatabase:
-    """Return the 'nextstep' database handle."""
-    return _get_client()["nextstep"]
+    """Return the 'ace_opportunity' database handle."""
+    return _get_client()["ace_opportunity"]

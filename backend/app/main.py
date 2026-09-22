@@ -6,7 +6,7 @@ from .core.config import get_settings
 settings = get_settings()
 
 app = FastAPI(
-    title="NextStep API",
+    title="Ace-Opportunity API",
     description="AI copilot matching CVs to real opportunities.",
     version="0.1.0",
 )

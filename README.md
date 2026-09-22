@@ -1,4 +1,4 @@
-# NextStep
+# Ace-Opportunity
 
 An AI copilot that matches you to real opportunities — internships, scholarships, and grants — based on your actual CV, not keyword guessing.
 
