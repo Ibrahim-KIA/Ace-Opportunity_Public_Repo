@@ -5,29 +5,56 @@ An AI copilot that matches you to real opportunities — internships, scholarshi
 ## What it does
 
 1. **Upload your CV** — an LLM extracts a structured profile (skills, education, experience, interests).
-2. **Match** — your profile is embedded and compared against a curated set of real opportunities using vector similarity, not simple keyword matching.
-3. **Explain** — each match comes with a plain-language "why you fit" rationale generated from your actual background.
-4. **Act** — a tailored checklist of what to prepare for your top matches (documents, deadlines, next steps).
+2. **Match** — your profile is embedded and compared against a curated set of real opportunities using vector similarity, not keyword matching.
+3. **Explain** — each match comes with a plain-language "why you fit" rationale grounded in your actual background.
+4. **Act** — a tailored prep checklist for your top matches (documents, deadlines, next steps).
 
-## Status
+## Stack
 
-🚧 Pre-build. This repo currently holds project structure and planning only — active development starts with StacStart Build Week (Sept 22–28, 2026). See [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) for the day-by-day plan.
-
-## Stack (planned)
-
-- **Backend:** FastAPI (Python)
-- **Frontend:** React
-- **Database:** MongoDB
-- **Vector search:** embeddings-based similarity for CV-to-opportunity matching
-- **Deploy:** frontend on Vercel, backend on Render
+- **Backend:** Python · FastAPI · deployed on Render
+- **Frontend:** React · Vite · deployed on Vercel
+- **Database:** MongoDB Atlas (via `motor` async driver)
+- **Embeddings:** `sentence-transformers` (`all-MiniLM-L6-v2`) — runs locally in the backend, no external embeddings API
+- **LLM:** Anthropic Claude API — profile extraction, fit explanations, checklists
 
 ## Repo layout
 
 ```
-backend/   API, CV parsing, matching engine
-frontend/  Web UI
-docs/      Planning and design notes
+backend/   FastAPI app, CV parsing, matching engine
+frontend/  React + Vite SPA
 ```
+
+## Running locally
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env          # fill in MONGODB_URI, ANTHROPIC_API_KEY, CORS_ORIGINS
+uvicorn app.main:app --reload
+# → http://localhost:8000/api/health
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env          # set VITE_API_URL=http://localhost:8000
+npm run dev
+# → http://localhost:5173
+```
+
+## Environment variables
+
+| Variable | Where | Purpose |
+|---|---|---|
+| `MONGODB_URI` | backend `.env` / Render | MongoDB Atlas connection string |
+| `ANTHROPIC_API_KEY` | backend `.env` / Render | Claude API key |
+| `CORS_ORIGINS` | backend `.env` / Render | Comma-separated allowed origins (set to your Vercel URL in prod) |
+| `VITE_API_URL` | frontend `.env` / Vercel | Backend URL (`http://localhost:8000` for local dev) |
 
 ## Team
 
