@@ -3,3 +3,8 @@ uvicorn[standard]
 motor
 pydantic-settings
 python-dotenv
+google-genai>=2.3.0
+anthropic
+pypdf
+python-docx
+python-multipart
