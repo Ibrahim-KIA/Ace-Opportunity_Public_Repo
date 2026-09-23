@@ -137,8 +137,13 @@ def extract_profile_with_gemini(cv_text: str, api_key: str) -> Dict[str, Any]:
     client = genai.Client(api_key=api_key)
     prompt = f"{SYSTEM_PROMPT}\n\nHere is the CV text to extract:\n\n{cv_text[:20000]}"
 
-    # Use gemini-2.5-flash for high quality and speed on the free tier
-    models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+    # Use latest available Gemini Flash models
+    models_to_try = [
+        "gemini-3.6-flash",
+        "gemini-3.8-flash",
+        "gemini-flash-latest",
+        "gemini-3.5-flash-lite",
+    ]
     last_error: Exception | None = None
 
     for model_name in models_to_try:
