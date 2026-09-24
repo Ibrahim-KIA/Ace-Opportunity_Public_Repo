@@ -1,0 +1,252 @@
+﻿[
+  {
+    "title": "Google Summer of Code",
+    "organization": "Google",
+    "type": "internship",
+    "eligibility": "Students 18+ enrolled in a post-secondary academic program or recently graduated (within 12 months). Open internationally.",
+    "description": "A global program where students spend the summer writing code for open source organizations. Students receive a stipend and work with experienced mentors. GSoC spans 12-22 weeks and covers a broad range of open source projects across all programming languages.",
+    "deadline": "rolling",
+    "link": "https://summerofcode.withgoogle.com/",
+    "tags": ["open source", "software engineering", "mentorship", "programming", "STEM", "remote"]
+  },
+  {
+    "title": "Microsoft Explore Internship",
+    "organization": "Microsoft",
+    "type": "internship",
+    "eligibility": "First- or second-year undergraduate students pursuing a degree in computer science or a related field.",
+    "description": "A 12-week summer program for early-in-career students to explore engineering roles at Microsoft. Interns rotate across software engineering, program management, and data science. Full compensation and housing provided in Redmond, WA.",
+    "deadline": "2025-11-01",
+    "link": "https://careers.microsoft.com/students/us/en/usexploreprogram",
+    "tags": ["software engineering", "program management", "data science", "computer science", "early career"]
+  },
+  {
+    "title": "Meta University Engineering Program",
+    "organization": "Meta",
+    "type": "internship",
+    "eligibility": "First- or second-year undergraduate students pursuing a BS or MS in computer science or related technical field.",
+    "description": "A paid 12-week internship designed for students from underrepresented backgrounds. Participants work on real engineering projects at Meta alongside mentors and a cohort of peers. Housing assistance provided.",
+    "deadline": "2025-10-15",
+    "link": "https://www.metacareers.com/careerprograms/pathways/metauniversity",
+    "tags": ["software engineering", "diversity", "computer science", "underrepresented", "paid"]
+  },
+  {
+    "title": "NASA Internship Program",
+    "organization": "NASA",
+    "type": "internship",
+    "eligibility": "US citizens currently enrolled full-time in an accredited US college or university, minimum 3.0 GPA, 16+ years old.",
+    "description": "NASA offers hundreds of internship opportunities across its 10 field centers. Interns contribute to real NASA missions in engineering, science, business, and communications. Paid positions; some include housing allowances.",
+    "deadline": "rolling",
+    "link": "https://intern.nasa.gov/",
+    "tags": ["aerospace", "engineering", "science", "STEM", "research", "US citizens"]
+  },
+  {
+    "title": "Goldman Sachs Summer Analyst Program",
+    "organization": "Goldman Sachs",
+    "type": "internship",
+    "eligibility": "Penultimate-year undergraduate students from any degree discipline. Strong analytical and communication skills required.",
+    "description": "A 10-week paid summer internship across divisions including Engineering, Investment Banking, Markets, and Asset Management. Interns work on live projects, receive mentorship, and are considered for full-time offers. Offices across London, New York, and other global cities.",
+    "deadline": "2025-11-30",
+    "link": "https://www.goldmansachs.com/careers/students/programs/",
+    "tags": ["finance", "investment banking", "engineering", "markets", "analytics"]
+  },
+  {
+    "title": "Rhodes Scholarship",
+    "organization": "Rhodes Trust",
+    "type": "scholarship",
+    "eligibility": "Citizens of eligible countries aged 19-25 at time of taking up scholarship. Outstanding academic record required.",
+    "description": "The world's oldest international graduate scholarship, supporting postgraduate study at the University of Oxford. Covers all University and college fees, a living stipend, and economy airfare. Around 100 scholars selected globally each year.",
+    "deadline": "2025-10-01",
+    "link": "https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/",
+    "tags": ["postgraduate", "Oxford", "academic excellence", "leadership", "fully funded"]
+  },
+  {
+    "title": "Gates Cambridge Scholarship",
+    "organization": "Gates Cambridge Trust",
+    "type": "scholarship",
+    "eligibility": "Citizens of any country outside the UK, applying for a full-time postgraduate degree at the University of Cambridge.",
+    "description": "Funded by the Bill & Melinda Gates Foundation, this scholarship covers the full cost of study at Cambridge plus a maintenance allowance. Around 80 scholars are selected annually based on academic excellence, leadership potential, and commitment to improving the lives of others.",
+    "deadline": "2025-10-09",
+    "link": "https://www.gatescambridge.org/",
+    "tags": ["Cambridge", "postgraduate", "leadership", "fully funded", "academic excellence"]
+  },
+  {
+    "title": "Chevening Scholarship",
+    "organization": "UK Foreign, Commonwealth & Development Office",
+    "type": "scholarship",
+    "eligibility": "Citizens of Chevening-eligible countries with at least 2 years of work experience and a UK university offer for a one-year masters degree.",
+    "description": "The UK government's flagship international awards programme supporting outstanding individuals to study a one-year masters at any UK university. Covers tuition fees, living expenses, flights, and other allowances. Around 1,500 scholarships awarded annually.",
+    "deadline": "2025-11-05",
+    "link": "https://www.chevening.org/",
+    "tags": ["UK", "postgraduate", "masters", "leadership", "international", "fully funded"]
+  },
+  {
+    "title": "Schwarzman Scholars",
+    "organization": "Schwarzman College",
+    "type": "scholarship",
+    "eligibility": "Young leaders aged 18-28 from any country, applying to a one-year masters in global affairs at Tsinghua University, Beijing.",
+    "description": "Designed to prepare future leaders to understand China's growing role in global affairs. The fully funded program covers tuition, room, board, travel, and a personal stipend. Up to 200 scholars selected globally each year.",
+    "deadline": "2025-09-15",
+    "link": "https://www.schwarzmanscholars.org/",
+    "tags": ["China", "global affairs", "leadership", "fully funded", "masters"]
+  },
+  {
+    "title": "Fulbright US Student Program",
+    "organization": "US Department of State",
+    "type": "scholarship",
+    "eligibility": "US citizens with a bachelors degree by the program start date. Graduate students and early-career professionals eligible.",
+    "description": "Provides grants for US graduating seniors, graduate students, young professionals, and artists to study, research, or teach abroad for one year. Covers living expenses, travel, and health insurance in 140+ countries.",
+    "deadline": "2025-10-15",
+    "link": "https://us.fulbrightonline.org/",
+    "tags": ["research", "study abroad", "US citizens", "postgraduate", "teaching"]
+  },
+  {
+    "title": "Wellcome Trust PhD Studentships",
+    "organization": "Wellcome Trust",
+    "type": "scholarship",
+    "eligibility": "Applicants applying to a PhD programme at a Wellcome-supported institution in the UK. Biomedical and health research focus.",
+    "description": "Wellcome funds PhD students at leading UK universities through its research training programmes. Studentships cover tuition fees, a competitive stipend, and research expenses. Strong emphasis on biomedical, genomics, and global health research.",
+    "deadline": "rolling",
+    "link": "https://wellcome.org/grant-funding/schemes/phd-studentships",
+    "tags": ["PhD", "biomedical", "health", "research", "UK", "STEM"]
+  },
+  {
+    "title": "Soros Fellowships for New Americans",
+    "organization": "Paul & Daisy Soros Fellowships",
+    "type": "scholarship",
+    "eligibility": "Immigrants or children of immigrants who are US citizens or permanent residents, aged under 30, in or planning a graduate program in the US.",
+    "description": "Supports the graduate education of immigrants and children of immigrants in the United States. Awards up to $90,000 across two years (tuition support + living stipend). Up to 30 Fellows selected annually.",
+    "deadline": "2025-10-27",
+    "link": "https://www.pdsoros.org/",
+    "tags": ["graduate", "immigrants", "US", "diversity", "any field"]
+  },
+  {
+    "title": "Innovate UK Smart Grants",
+    "organization": "UK Research and Innovation (UKRI)",
+    "type": "grant",
+    "eligibility": "UK-registered businesses of any size, including startups, working on disruptive R&D projects with commercial potential.",
+    "description": "Quarterly open competition awarding grants for game-changing or disruptive R&D ideas with the potential to create new markets. Projects between 25,000 and 500,000 GBP. Non-dilutive funding that does not require equity.",
+    "deadline": "rolling",
+    "link": "https://www.ukri.org/councils/innovate-uk/",
+    "tags": ["startup", "R&D", "UK", "innovation", "technology", "non-dilutive"]
+  },
+  {
+    "title": "European Research Council Starting Grant",
+    "organization": "European Research Council",
+    "type": "grant",
+    "eligibility": "Researchers of any nationality holding a PhD with 2-7 years post-doctoral experience, based at or moving to an EU or associated country host institution.",
+    "description": "ERC Starting Grants support early-career researchers in establishing their own research team and launching an independent, frontier research project. Grants up to 1.5M EUR for 5 years. Highly competitive and peer-reviewed.",
+    "deadline": "2026-04-01",
+    "link": "https://erc.europa.eu/funding/starting-grants",
+    "tags": ["research", "Europe", "early career", "frontier science", "academia"]
+  },
+  {
+    "title": "Thiel Fellowship",
+    "organization": "Thiel Foundation",
+    "type": "grant",
+    "eligibility": "Under 23 years old, willing to leave or skip college to pursue a startup or research project.",
+    "description": "A two-year program awarding $100,000 to 20-25 young people each year to skip or stop out of college and launch a company or research project. Fellows receive funding, mentorship, and access to the Thiel network of investors and entrepreneurs.",
+    "deadline": "2026-02-15",
+    "link": "https://thielfellowship.org/",
+    "tags": ["startup", "entrepreneurship", "young founders", "tech", "non-dilutive"]
+  },
+  {
+    "title": "Y Combinator Startup School",
+    "organization": "Y Combinator",
+    "type": "grant",
+    "eligibility": "Early-stage founders at any stage, any country. No age requirement; particularly suitable for student founders.",
+    "description": "A free, 8-week online program helping early-stage founders build and launch startups. Top-performing startups from Startup School are fast-tracked to apply for YC's main batch, which includes $500,000 in funding.",
+    "deadline": "rolling",
+    "link": "https://www.startupschool.org/",
+    "tags": ["startup", "entrepreneurship", "founders", "free", "online", "mentorship"]
+  },
+  {
+    "title": "Jane Street FOCUS Fellowship",
+    "organization": "Jane Street",
+    "type": "internship",
+    "eligibility": "First-year undergraduate women and non-binary students studying STEM subjects, particularly math, computer science, or statistics.",
+    "description": "A 5-day immersive program at Jane Street offices for early-career women and non-binary students to explore quantitative trading and technology. Participants attend workshops, solve trading puzzles, and meet Jane Street staff. Travel and accommodation covered.",
+    "deadline": "2026-01-10",
+    "link": "https://www.janestreet.com/join-jane-street/programs-and-events/focus/",
+    "tags": ["quantitative finance", "trading", "women in tech", "mathematics", "STEM", "first-year"]
+  },
+  {
+    "title": "Google DeepMind Scholarship",
+    "organization": "Google DeepMind",
+    "type": "scholarship",
+    "eligibility": "Students from underrepresented groups applying to or enrolled in a masters in machine learning, AI, or a related field at a partner UK university.",
+    "description": "Google DeepMind partners with top UK universities to fund masters students from underrepresented backgrounds in AI and ML. Scholarships cover tuition fees and provide a living stipend. Recipients also gain access to mentorship and DeepMind events.",
+    "deadline": "2026-03-01",
+    "link": "https://deepmind.google/about/education/",
+    "tags": ["AI", "machine learning", "diversity", "postgraduate", "UK", "STEM"]
+  },
+  {
+    "title": "Bloomberg Women in Technology Scholarship",
+    "organization": "Bloomberg",
+    "type": "scholarship",
+    "eligibility": "Women-identifying undergraduate students studying computer science or engineering in the US, UK, or India.",
+    "description": "Awarded to outstanding women pursuing technology degrees. The scholarship covers tuition support and includes a paid summer internship at Bloomberg. Recipients receive mentorship and access to Bloomberg's global engineering community.",
+    "deadline": "2026-01-31",
+    "link": "https://www.bloomberg.com/diversity-inclusion/engineering/",
+    "tags": ["women in tech", "computer science", "engineering", "internship", "diversity", "undergraduate"]
+  },
+  {
+    "title": "Shopify Engineering Internship",
+    "organization": "Shopify",
+    "type": "internship",
+    "eligibility": "Students in computer science or software engineering undergraduate programs. Remote-friendly; international applications welcome.",
+    "description": "A co-op style program where students complete full-time paid internships at Shopify working on production codebases and real merchant-facing products. Strong remote-first culture with teams across the globe.",
+    "deadline": "rolling",
+    "link": "https://www.shopify.com/careers/internships",
+    "tags": ["software engineering", "e-commerce", "co-op", "remote", "computer science"]
+  },
+  {
+    "title": "Palantir Path Scholarship",
+    "organization": "Palantir Technologies",
+    "type": "scholarship",
+    "eligibility": "Undergraduate students studying computer science, software engineering, or related fields who identify as underrepresented in tech.",
+    "description": "Provides $7,000 grants to undergraduate students from underrepresented backgrounds pursuing degrees in technology. Winners are also invited to a paid Palantir Forward internship. Open to applicants in the US, UK, and Canada.",
+    "deadline": "2026-04-15",
+    "link": "https://www.palantir.com/students/scholarship/path-scholarships/",
+    "tags": ["computer science", "diversity", "undergraduate", "software engineering", "STEM", "US", "UK"]
+  },
+  {
+    "title": "EPSRC Doctoral Training Partnerships",
+    "organization": "Engineering and Physical Sciences Research Council",
+    "type": "scholarship",
+    "eligibility": "UK domestic students applying for a PhD in engineering or physical sciences. International students eligible for fees-only support at some DTPs.",
+    "description": "EPSRC funds PhD studentships through Doctoral Training Partnerships at UK universities. Fully funded stipend plus tuition fees for 3-4 years of doctoral research in engineering, computing, mathematics, and physical sciences.",
+    "deadline": "rolling",
+    "link": "https://www.ukri.org/councils/epsrc/",
+    "tags": ["PhD", "engineering", "computing", "mathematics", "UK", "STEM", "research"]
+  },
+  {
+    "title": "Venture for America Fellowship",
+    "organization": "Venture for America",
+    "type": "internship",
+    "eligibility": "Recent college graduates from any major. US citizens or those authorized to work in the US.",
+    "description": "A 2-year fellowship placing recent college graduates at startups in emerging US cities. Fellows receive entrepreneurship training, a living wage, and mentorship. Designed to jumpstart careers in innovation and build the next generation of entrepreneurs.",
+    "deadline": "2026-02-28",
+    "link": "https://ventureforamerica.org/apply/",
+    "tags": ["startup", "entrepreneurship", "recent graduate", "US", "early career"]
+  },
+  {
+    "title": "CodePath Tech Fellowship",
+    "organization": "CodePath.org",
+    "type": "internship",
+    "eligibility": "Computer science students at any US college or university, particularly those from low-income, first-generation, or underrepresented backgrounds.",
+    "description": "Free, intensive software engineering courses paired with career coaching and recruiter connections at top tech companies. Graduates are placed in internships and full-time roles at companies like Google, Meta, and LinkedIn.",
+    "deadline": "rolling",
+    "link": "https://www.codepath.org/",
+    "tags": ["software engineering", "free", "diversity", "career development", "US", "computer science"]
+  },
+  {
+    "title": "Breakthrough Junior Challenge",
+    "organization": "Breakthrough Prize Foundation",
+    "type": "grant",
+    "eligibility": "Students aged 13-18 from any country who can submit a short video explaining a challenging scientific concept.",
+    "description": "An annual global competition inviting students to produce a short video (under 3 minutes) that illustrates a concept in mathematics, life sciences, or physics. The winner receives a $250,000 scholarship and their teacher and school receive additional awards.",
+    "deadline": "2025-06-30",
+    "link": "https://breakthroughjuniorchallenge.org/",
+    "tags": ["science", "mathematics", "physics", "high school", "video", "STEM", "global"]
+  }
+]

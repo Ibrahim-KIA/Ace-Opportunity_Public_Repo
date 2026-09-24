@@ -137,12 +137,12 @@ def extract_profile_with_gemini(cv_text: str, api_key: str) -> Dict[str, Any]:
     client = genai.Client(api_key=api_key)
     prompt = f"{SYSTEM_PROMPT}\n\nHere is the CV text to extract:\n\n{cv_text[:20000]}"
 
-    # Use latest available Gemini Flash models
+    # Use latest available Gemini Flash models (ordered by preference)
     models_to_try = [
-        "gemini-3.6-flash",
         "gemini-3.8-flash",
+        "gemini-3.5-flash",
         "gemini-flash-latest",
-        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
     ]
     last_error: Exception | None = None
 

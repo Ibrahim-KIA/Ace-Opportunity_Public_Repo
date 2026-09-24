@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .core.config import get_settings
 from .routers.cv import router as cv_router
+from .routes.opportunities import router as opportunities_router
 
 settings = get_settings()
 
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(cv_router, prefix="/api")
+app.include_router(opportunities_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["Health"])

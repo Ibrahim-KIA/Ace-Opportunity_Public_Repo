@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -190,12 +190,113 @@ function UploadZone({ onUpload, loading }) {
   )
 }
 
+// ─── opportunities browse view ────────────────────────────────────────────────
+
+const TYPE_COLORS = {
+  internship: 'opp-type-internship',
+  scholarship: 'opp-type-scholarship',
+  grant: 'opp-type-grant',
+}
+
+function OpportunityCard({ opp }) {
+  return (
+    <a
+      className="opp-card"
+      href={opp.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      id={`opp-${opp.title.toLowerCase().replace(/\s+/g, '-')}`}
+    >
+      <div className="opp-card-header">
+        <span className={`opp-type-badge ${TYPE_COLORS[opp.type] || 'opp-type-grant'}`}>
+          {opp.type}
+        </span>
+        <span className="opp-deadline">
+          {opp.deadline === 'rolling' ? '🔄 Rolling' : `⏰ ${opp.deadline}`}
+        </span>
+      </div>
+      <h3 className="opp-title">{opp.title}</h3>
+      <p className="opp-org">{opp.organization}</p>
+      <p className="opp-desc">{opp.description}</p>
+      {opp.tags && opp.tags.length > 0 && (
+        <div className="badge-row opp-tags">
+          {opp.tags.slice(0, 4).map((t, i) => (
+            <span key={i} className="badge badge-tag">{t}</span>
+          ))}
+        </div>
+      )}
+    </a>
+  )
+}
+
+function OpportunitiesView() {
+  const [opportunities, setOpportunities] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [filter, setFilter] = useState('all')
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/opportunities`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then(data => { setOpportunities(data); setLoading(false) })
+      .catch(err => { setError(err.message); setLoading(false) })
+  }, [])
+
+  const filtered = filter === 'all'
+    ? opportunities
+    : opportunities.filter(o => o.type === filter)
+
+  return (
+    <div className="opps-view">
+      <div className="opps-filters">
+        {['all', 'internship', 'scholarship', 'grant'].map(f => (
+          <button
+            key={f}
+            className={`filter-btn ${filter === f ? 'active' : ''}`}
+            onClick={() => setFilter(f)}
+          >
+            {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1) + 's'}
+          </button>
+        ))}
+      </div>
+
+      {loading && (
+        <div className="opps-loading">
+          <span className="spinner" style={{ borderTopColor: 'var(--accent)' }} />
+          <p>Loading opportunities…</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="result error">
+          <span className="dot red" />
+          <p>Could not load opportunities: <strong>{error}</strong></p>
+        </div>
+      )}
+
+      {!loading && !error && filtered.length === 0 && (
+        <p className="opps-empty">No opportunities found. Check back after the database is seeded.</p>
+      )}
+
+      <div className="opps-grid" id="opportunities-list">
+        {filtered.map((opp, i) => (
+          <OpportunityCard key={i} opp={opp} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── app root ────────────────────────────────────────────────────────────────
 
 export default function App() {
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [view, setView] = useState('upload') // 'upload' | 'opportunities'
 
   async function handleUpload(file) {
     setLoading(true)
@@ -232,36 +333,58 @@ export default function App() {
         <p className="tagline">
           AI copilot that matches your CV to real internships, scholarships &amp; grants.
         </p>
+        <nav className="main-nav">
+          <button
+            id="nav-upload"
+            className={`nav-btn ${view === 'upload' ? 'active' : ''}`}
+            onClick={() => { setView('upload'); handleReset() }}
+          >
+            Upload CV
+          </button>
+          <button
+            id="nav-opportunities"
+            className={`nav-btn ${view === 'opportunities' ? 'active' : ''}`}
+            onClick={() => setView('opportunities')}
+          >
+            Browse Opportunities
+          </button>
+        </nav>
       </header>
 
       <main>
-        {!profile ? (
-          <div className="card">
-            <p className="card-hint">Step 1 — Upload your CV</p>
-            <h2 className="card-title">Let's build your profile</h2>
-            <p className="card-desc">
-              Upload your CV and our AI will extract your skills, education and
-              experience in seconds.
-            </p>
-            <UploadZone onUpload={handleUpload} loading={loading} />
+        {view === 'upload' && (
+          <>
+            {!profile ? (
+              <div className="card">
+                <p className="card-hint">Step 1 — Upload your CV</p>
+                <h2 className="card-title">Let's build your profile</h2>
+                <p className="card-desc">
+                  Upload your CV and our AI will extract your skills, education and
+                  experience in seconds.
+                </p>
+                <UploadZone onUpload={handleUpload} loading={loading} />
 
-            {error && (
-              <div className="result error" id="parse-error">
-                <span className="dot red" />
-                <p>Error: <strong>{error}</strong></p>
+                {error && (
+                  <div className="result error" id="parse-error">
+                    <span className="dot red" />
+                    <p>Error: <strong>{error}</strong></p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <ProfileCard profile={profile} />
+                <div className="reset-row">
+                  <button id="reset-btn" className="btn-ghost" onClick={handleReset}>
+                    ← Upload a different CV
+                  </button>
+                </div>
               </div>
             )}
-          </div>
-        ) : (
-          <div>
-            <ProfileCard profile={profile} />
-            <div className="reset-row">
-              <button id="reset-btn" className="btn-ghost" onClick={handleReset}>
-                ← Upload a different CV
-              </button>
-            </div>
-          </div>
+          </>
         )}
+
+        {view === 'opportunities' && <OpportunitiesView />}
       </main>
     </div>
   )

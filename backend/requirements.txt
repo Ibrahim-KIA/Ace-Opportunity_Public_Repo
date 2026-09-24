@@ -8,3 +8,4 @@ anthropic
 pypdf
 python-docx
 python-multipart
+sentence-transformers
