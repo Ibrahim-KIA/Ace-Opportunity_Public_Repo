@@ -33,7 +33,7 @@ async def seed() -> None:
         logger.error("Dataset not found at %s", DATA_PATH)
         sys.exit(1)
 
-    with DATA_PATH.open(encoding="utf-8") as fh:
+    with DATA_PATH.open(encoding="utf-8-sig") as fh:
         opportunities = json.load(fh)
 
     logger.info("Loaded %d opportunities from %s", len(opportunities), DATA_PATH)
