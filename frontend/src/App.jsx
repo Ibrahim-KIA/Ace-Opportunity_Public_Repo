@@ -1,231 +1,61 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import UploadForm from './components/UploadForm'
+import LoadingState from './components/LoadingState'
+import MatchResults from './components/MatchResults'
+import ErrorMessage from './components/ErrorMessage'
 import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-
-function Badge({ text, variant = 'skill' }) {
-  return <span className={`badge badge-${variant}`}>{text}</span>
-}
-
-function SectionHeading({ children }) {
-  return <h3 className="section-heading">{children}</h3>
-}
-
-// ─── profile display ─────────────────────────────────────────────────────────
-
-function ProfileCard({ profile }) {
-  const education = profile.education || []
-  const experience = profile.experience || []
-  const skills = profile.skills || []
-  const interests = profile.interests || []
-
-  return (
-    <div className="profile-card" id="profile-card">
-      {/* Header */}
-      <div className="profile-header">
-        <div className="avatar">{profile.name ? profile.name[0].toUpperCase() : '?'}</div>
-        <div>
-          <h2 className="profile-name">{profile.name || 'Name not found'}</h2>
-          {profile.email && <p className="profile-email">{profile.email}</p>}
-        </div>
-      </div>
-
-      {/* Summary */}
-      {profile.summary && (
-        <div className="profile-section">
-          <SectionHeading>Summary</SectionHeading>
-          <p className="summary-text">{profile.summary}</p>
-        </div>
-      )}
-
-      {/* Skills */}
-      {skills.length > 0 && (
-        <div className="profile-section">
-          <SectionHeading>Skills</SectionHeading>
-          <div className="badge-row">
-            {skills.map((s, i) => <Badge key={i} text={s} variant="skill" />)}
-          </div>
-        </div>
-      )}
-
-      {/* Interests */}
-      {interests.length > 0 && (
-        <div className="profile-section">
-          <SectionHeading>Interests</SectionHeading>
-          <div className="badge-row">
-            {interests.map((it, i) => <Badge key={i} text={it} variant="interest" />)}
-          </div>
-        </div>
-      )}
-
-      {/* Education */}
-      {education.length > 0 && (
-        <div className="profile-section">
-          <SectionHeading>Education</SectionHeading>
-          <ul className="timeline">
-            {education.map((e, i) => {
-              const years = (e.start_year || e.end_year)
-                ? [e.start_year, e.end_year].filter(Boolean).join('–')
-                : (e.year || '')
-              return (
-                <li key={i} className="timeline-item">
-                  <span className="timeline-dot" />
-                  <div>
-                    <p className="timeline-title">{e.institution}</p>
-                    <p className="timeline-sub">
-                      {[e.degree, e.field].filter(Boolean).join(' · ')}
-                      {years && <> &mdash; {years}</>}
-                    </p>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* Experience */}
-      {experience.length > 0 && (
-        <div className="profile-section">
-          <SectionHeading>Experience</SectionHeading>
-          <ul className="timeline">
-            {experience.map((ex, i) => {
-              const dates = (ex.start_date || ex.end_date)
-                ? [ex.start_date, ex.end_date].filter(Boolean).join(' – ')
-                : (ex.duration || '')
-              const org = ex.organisation || ex.organization || ''
-              return (
-                <li key={i} className="timeline-item">
-                  <span className="timeline-dot" />
-                  <div>
-                    <p className="timeline-title">
-                      {ex.role} {org && <span className="org">@ {org}</span>}
-                    </p>
-                    {dates && <p className="timeline-sub">{dates}</p>}
-                    {ex.description && <p className="timeline-desc">{ex.description}</p>}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── upload zone ─────────────────────────────────────────────────────────────
-
-function UploadZone({ onUpload, loading }) {
-  const inputRef = useRef(null)
-  const [dragging, setDragging] = useState(false)
-  const [selectedFile, setSelectedFile] = useState(null)
-
-  function handleFile(file) {
-    if (!file) return
-    setSelectedFile(file)
-  }
-
-  function handleDrop(e) {
-    e.preventDefault()
-    setDragging(false)
-    const file = e.dataTransfer.files[0]
-    handleFile(file)
-  }
-
-  function handleChange(e) {
-    handleFile(e.target.files[0])
-  }
-
-  function handleSubmit() {
-    if (selectedFile) onUpload(selectedFile)
-  }
-
-  return (
-    <div className="upload-section">
-      <div
-        id="drop-zone"
-        className={`drop-zone ${dragging ? 'dragging' : ''} ${selectedFile ? 'has-file' : ''}`}
-        onClick={() => inputRef.current.click()}
-        onDragOver={e => { e.preventDefault(); setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".pdf,.docx"
-          style={{ display: 'none' }}
-          id="cv-file-input"
-          onChange={handleChange}
-        />
-        {selectedFile ? (
-          <>
-            <div className="file-icon">📄</div>
-            <p className="file-name">{selectedFile.name}</p>
-            <p className="drop-hint">Click to change file</p>
-          </>
-        ) : (
-          <>
-            <div className="upload-icon">☁️</div>
-            <p className="drop-primary">Drop your CV here</p>
-            <p className="drop-hint">PDF or DOCX · max 5 MB</p>
-          </>
-        )}
-      </div>
-
-      <button
-        id="parse-cv-btn"
-        className="btn-primary"
-        onClick={handleSubmit}
-        disabled={!selectedFile || loading}
-      >
-        {loading
-          ? <><span className="spinner" /> Analyzing your CV with AI…</>
-          : 'Parse my CV →'}
-      </button>
-    </div>
-  )
-}
-
-// ─── opportunities browse view ────────────────────────────────────────────────
-
-const TYPE_COLORS = {
-  internship: 'opp-type-internship',
-  scholarship: 'opp-type-scholarship',
-  grant: 'opp-type-grant',
-}
+// ─── Opportunities Browse View ──────────────────────────────────────────────
 
 function OpportunityCard({ opp }) {
+  const typeConfig = {
+    internship: { label: 'Internship', badgeClass: 'badge-internship', icon: '💼' },
+    scholarship: { label: 'Scholarship', badgeClass: 'badge-scholarship', icon: '🎓' },
+    grant: { label: 'Grant', badgeClass: 'badge-grant', icon: '💰' },
+  }[opp.type] || { label: opp.type, badgeClass: 'badge-internship', icon: '⭐' }
+
+  const isRolling = !opp.deadline || opp.deadline.toLowerCase() === 'rolling'
+
   return (
-    <a
-      className="opp-card"
-      href={opp.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      id={`opp-${opp.title.toLowerCase().replace(/\s+/g, '-')}`}
-    >
-      <div className="opp-card-header">
-        <span className={`opp-type-badge ${TYPE_COLORS[opp.type] || 'opp-type-grant'}`}>
-          {opp.type}
+    <div className="opp-browse-card" id={`opp-${opp.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+      <div className="opp-browse-header">
+        <span className={`match-type-badge ${typeConfig.badgeClass}`}>
+          <span>{typeConfig.icon}</span> {typeConfig.label}
         </span>
-        <span className="opp-deadline">
-          {opp.deadline === 'rolling' ? '🔄 Rolling' : `⏰ ${opp.deadline}`}
+        <span className={`match-deadline-badge ${isRolling ? 'rolling' : ''}`}>
+          {isRolling ? '🔄 Rolling' : `📅 ${opp.deadline}`}
         </span>
       </div>
-      <h3 className="opp-title">{opp.title}</h3>
-      <p className="opp-org">{opp.organization}</p>
-      <p className="opp-desc">{opp.description}</p>
+      <h3 className="opp-browse-title">{opp.title}</h3>
+      <p className="opp-browse-org">{opp.organization}</p>
+      <p className="opp-browse-desc">{opp.description}</p>
+      {opp.eligibility && (
+        <p className="opp-browse-eligibility">
+          <strong>Eligibility:</strong> {opp.eligibility}
+        </p>
+      )}
       {opp.tags && opp.tags.length > 0 && (
-        <div className="badge-row opp-tags">
-          {opp.tags.slice(0, 4).map((t, i) => (
-            <span key={i} className="badge badge-tag">{t}</span>
+        <div className="opp-browse-tags">
+          {opp.tags.map((t, i) => (
+            <span key={i} className="match-tag-pill">
+              #{t}
+            </span>
           ))}
         </div>
       )}
-    </a>
+      <div className="opp-browse-footer">
+        <a
+          href={opp.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-apply btn-sm"
+        >
+          View Program ↗
+        </a>
+      </div>
+    </div>
   )
 }
 
@@ -237,155 +67,265 @@ function OpportunitiesView() {
 
   useEffect(() => {
     fetch(`${API_URL}/api/opportunities`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to load opportunities`)
         return res.json()
       })
-      .then(data => { setOpportunities(data); setLoading(false) })
-      .catch(err => { setError(err.message); setLoading(false) })
+      .then((data) => {
+        setOpportunities(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
   }, [])
 
-  const filtered = filter === 'all'
-    ? opportunities
-    : opportunities.filter(o => o.type === filter)
+  const filtered =
+    filter === 'all'
+      ? opportunities
+      : opportunities.filter((o) => o.type === filter)
 
   return (
-    <div className="opps-view">
-      <div className="opps-filters">
-        {['all', 'internship', 'scholarship', 'grant'].map(f => (
+    <div className="opps-browse-container">
+      <div className="opps-browse-hero">
+        <h2>Curated Global Opportunities</h2>
+        <p>Explore 25+ verified scholarships, internships, and grants indexed in our system.</p>
+      </div>
+
+      <div className="opps-filters-bar">
+        {['all', 'internship', 'scholarship', 'grant'].map((f) => (
           <button
             key={f}
-            className={`filter-btn ${filter === f ? 'active' : ''}`}
+            className={`filter-pill ${filter === f ? 'active' : ''}`}
             onClick={() => setFilter(f)}
           >
-            {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1) + 's'}
+            {f === 'all'
+              ? `All Opportunities (${opportunities.length})`
+              : f.charAt(0).toUpperCase() + f.slice(1) + 's'}
           </button>
         ))}
       </div>
 
       {loading && (
-        <div className="opps-loading">
-          <span className="spinner" style={{ borderTopColor: 'var(--accent)' }} />
-          <p>Loading opportunities…</p>
+        <div className="browse-loading">
+          <span className="spinner spinner-lg" />
+          <p>Loading curated opportunities dataset...</p>
         </div>
       )}
 
-      {error && (
-        <div className="result error">
-          <span className="dot red" />
-          <p>Could not load opportunities: <strong>{error}</strong></p>
-        </div>
-      )}
+      {error && <ErrorMessage message={error} onRetry={() => window.location.reload()} />}
 
       {!loading && !error && filtered.length === 0 && (
-        <p className="opps-empty">No opportunities found. Check back after the database is seeded.</p>
+        <div className="card text-center">
+          <p>No opportunities found for the selected category.</p>
+        </div>
       )}
 
       <div className="opps-grid" id="opportunities-list">
-        {filtered.map((opp, i) => (
-          <OpportunityCard key={i} opp={opp} />
+        {filtered.map((opp, idx) => (
+          <OpportunityCard key={idx} opp={opp} />
         ))}
       </div>
     </div>
   )
 }
 
-// ─── app root ────────────────────────────────────────────────────────────────
+// ─── Main Application Root ──────────────────────────────────────────────────
 
 export default function App() {
+  const [navTab, setNavTab] = useState('match') // 'match' | 'browse'
   const [profile, setProfile] = useState(null)
-  const [error, setError] = useState(null)
+  const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(false)
-  const [view, setView] = useState('upload') // 'upload' | 'opportunities'
+  const [error, setError] = useState(null)
+  const [lastFile, setLastFile] = useState(null)
+
+  async function executeMatchFlow(profileId, candidateProfile) {
+    try {
+      const matchRes = await fetch(`${API_URL}/api/match/${profileId}`)
+      if (!matchRes.ok) {
+        const errData = await matchRes.json().catch(() => ({}))
+        throw new Error(errData.detail || `Matching engine returned HTTP ${matchRes.status}`)
+      }
+      const matchData = await matchRes.json()
+      setMatches(Array.isArray(matchData) ? matchData : matchData.matches || [])
+      setProfile(candidateProfile)
+    } catch (err) {
+      setError(err.message || 'Error computing semantic matches')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleUpload(file) {
     setLoading(true)
     setError(null)
     setProfile(null)
+    setMatches([])
+    setLastFile(file)
 
-    const form = new FormData()
-    form.append('file', file)
+    const formData = new FormData()
+    formData.append('file', file)
 
     try {
-      const res = await fetch(`${API_URL}/api/cv/upload`, {
+      // 1. Upload CV & Extract Profile
+      const uploadRes = await fetch(`${API_URL}/api/cv/upload`, {
         method: 'POST',
-        body: form,
+        body: formData,
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`)
-      setProfile(data.profile || data)
+      const uploadData = await uploadRes.json()
+      if (!uploadRes.ok) {
+        throw new Error(uploadData.detail || `Upload failed with HTTP ${uploadRes.status}`)
+      }
+
+      const profileId = uploadData.profile_id || uploadData.id
+      const candidateProfile = uploadData.profile || uploadData
+
+      if (!profileId) {
+        throw new Error('Profile was extracted but no valid profile ID was returned.')
+      }
+
+      // 2. Fetch Semantic Matches with Grounded Explanations
+      await executeMatchFlow(profileId, candidateProfile)
+    } catch (err) {
+      setError(err.message || 'Failed to analyze CV document')
+      setLoading(false)
+    }
+  }
+
+  // Quick-test flow with sample student profile
+  async function handleSampleTest() {
+    setLoading(true)
+    setError(null)
+    setProfile(null)
+    setMatches([])
+
+    try {
+      // Try existing Sarah Connor profile in MongoDB
+      const res = await fetch(`${API_URL}/api/match/6ab7ec317e261dcd945c3be3`)
+      if (res.ok) {
+        const matchData = await res.json()
+        setMatches(matchData)
+        setProfile({
+          name: 'Sarah Connor',
+          email: 'sarah.connor@example.com',
+          skills: ['Python', 'FastAPI', 'React', 'Machine Learning', 'Git', 'Robotics'],
+          summary: 'Motivated Computer Science undergraduate with hands-on full stack and machine learning development experience.',
+          interests: ['Artificial Intelligence', 'Robotics', 'Open Source Development'],
+          education: [
+            {
+              institution: 'Tech Institute',
+              degree: 'Bachelor of Science',
+              field: 'Computer Science & Robotics',
+              year: '2020–2024',
+            },
+          ],
+          experience: [
+            {
+              organisation: 'Cyberdyne Systems',
+              role: 'Software Developer Intern',
+              duration: 'Jun 2023 – Sep 2023',
+              description: 'Contributed to internal API microservices and robotics data pipelines.',
+            },
+          ],
+        })
+        setLoading(false)
+        return
+      }
+
+      // Fallback: Upload a mock CV if ID not found
+      throw new Error('Sample profile not found. Please upload a real CV file.')
     } catch (err) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
 
   function handleReset() {
     setProfile(null)
+    setMatches([])
     setError(null)
+    setLoading(false)
+    setLastFile(null)
   }
 
   return (
-    <div className="container">
-      <header>
-        <h1 className="logo">Ace-Opportunity</h1>
-        <p className="tagline">
-          AI copilot that matches your CV to real internships, scholarships &amp; grants.
-        </p>
-        <nav className="main-nav">
-          <button
-            id="nav-upload"
-            className={`nav-btn ${view === 'upload' ? 'active' : ''}`}
-            onClick={() => { setView('upload'); handleReset() }}
-          >
-            Upload CV
-          </button>
-          <button
-            id="nav-opportunities"
-            className={`nav-btn ${view === 'opportunities' ? 'active' : ''}`}
-            onClick={() => setView('opportunities')}
-          >
-            Browse Opportunities
-          </button>
-        </nav>
+    <div className="app-layout">
+      {/* Top Navigation Bar */}
+      <header className="navbar">
+        <div className="navbar-container">
+          <div className="brand" onClick={handleReset} role="button" tabIndex={0}>
+            <span className="brand-logo-icon">🎯</span>
+            <div className="brand-text">
+              <h1 className="brand-name">Ace-Opportunity</h1>
+              <span className="brand-tag">AI Career Matcher</span>
+            </div>
+          </div>
+
+          <nav className="nav-menu">
+            <button
+              id="nav-tab-match"
+              className={`nav-tab ${navTab === 'match' ? 'active' : ''}`}
+              onClick={() => {
+                setNavTab('match')
+                setError(null)
+              }}
+            >
+              Match CV
+            </button>
+            <button
+              id="nav-tab-browse"
+              className={`nav-tab ${navTab === 'browse' ? 'active' : ''}`}
+              onClick={() => {
+                setNavTab('browse')
+                setError(null)
+              }}
+            >
+              Browse Opportunities
+            </button>
+          </nav>
+        </div>
       </header>
 
-      <main>
-        {view === 'upload' && (
-          <>
-            {!profile ? (
-              <div className="card">
-                <p className="card-hint">Step 1 — Upload your CV</p>
-                <h2 className="card-title">Let's build your profile</h2>
-                <p className="card-desc">
-                  Upload your CV and our AI will extract your skills, education and
-                  experience in seconds.
-                </p>
-                <UploadZone onUpload={handleUpload} loading={loading} />
-
-                {error && (
-                  <div className="result error" id="parse-error">
-                    <span className="dot red" />
-                    <p>Error: <strong>{error}</strong></p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                <ProfileCard profile={profile} />
-                <div className="reset-row">
-                  <button id="reset-btn" className="btn-ghost" onClick={handleReset}>
-                    ← Upload a different CV
-                  </button>
-                </div>
-              </div>
+      {/* Main Content Area */}
+      <main className="main-content">
+        {navTab === 'match' && (
+          <div className="match-flow-wrapper">
+            {error && (
+              <ErrorMessage
+                message={error}
+                onRetry={lastFile ? () => handleUpload(lastFile) : handleReset}
+              />
             )}
-          </>
+
+            {loading ? (
+              <LoadingState />
+            ) : matches.length > 0 && profile ? (
+              <MatchResults
+                profile={profile}
+                matches={matches}
+                onReset={handleReset}
+              />
+            ) : (
+              <UploadForm
+                onUpload={handleUpload}
+                onSampleSelect={handleSampleTest}
+                loading={loading}
+              />
+            )}
+          </div>
         )}
 
-        {view === 'opportunities' && <OpportunitiesView />}
+        {navTab === 'browse' && <OpportunitiesView />}
       </main>
+
+      {/* Footer */}
+      <footer className="app-footer">
+        <p>
+          Ace-Opportunity &bull; Built with FastAPI, MongoDB Atlas, SentenceTransformers &amp; Google Gemini Flash.
+        </p>
+      </footer>
     </div>
   )
 }

@@ -50,22 +50,22 @@ Ace-Opportunity matches candidates to real scholarships, internships, and grants
 - [x] Comprehensive test suite covering parsers, models, and endpoints.
 
 ### Phase 3: Opportunity Dataset & Embeddings Pipeline (Day 3)
-- [ ] Curate structured dataset of 20+ verified opportunities (`backend/data/opportunities.json`) across internships, scholarships, and grants.
-- [ ] Implement local embeddings generator using `sentence-transformers` (`all-MiniLM-L6-v2` singleton).
-- [ ] Create idempotent database seed script (`backend/app/core/seed.py`) to populate the `opportunities` collection in Atlas.
-- [ ] Expose public opportunity listing endpoint (`GET /api/opportunities`, projecting out internal vector embeddings).
+- [x] Curate structured dataset of 20+ verified opportunities (`backend/data/opportunities.json`) across internships, scholarships, and grants.
+- [x] Implement local embeddings generator using `sentence-transformers` (`all-MiniLM-L6-v2` singleton).
+- [x] Create idempotent database seed script (`backend/app/core/seed.py`) to populate the `opportunities` collection in Atlas.
+- [x] Expose public opportunity listing endpoint (`GET /api/opportunities`, projecting out internal vector embeddings).
 
 ### Phase 4: Semantic Matching Engine & Fit Explanations (Day 4)
-- [ ] Cosine similarity utility and ranking algorithm (`backend/app/core/matching.py`).
-- [ ] Grounded AI rationale generator (`explain_fit`), citing concrete profile skills and experience rather than generic praise.
-- [ ] Match endpoint (`GET /api/match/{profile_id}`): loads candidate profile, computes embedding, ranks top 5 opportunities, and generates personalized explanations.
-- [ ] Connect upload flow to automated match querying in frontend.
+- [x] Cosine similarity utility and ranking algorithm (`backend/app/core/matching.py`).
+- [x] Grounded AI rationale generator (`explain_fit`), citing concrete profile skills and experience rather than generic praise.
+- [x] Match endpoint (`GET /api/match/{profile_id}`): loads candidate profile, computes embedding, ranks top 5 opportunities, and generates personalized explanations.
+- [x] Connect upload flow to automated match querying in frontend.
 
 ### Phase 5: Results Interface, Component Refactoring & UX (Day 5)
-- [ ] Refactor frontend into modular components: `UploadForm`, `LoadingState`, `MatchCard`, `MatchResults`, `ErrorMessage`.
-- [ ] Design visual fit score badges, type indicators, deadlines, and direct application links.
-- [ ] Staged progress messages during AI analysis and matching.
-- [ ] Responsive design verification for both desktop and mobile viewports.
+- [x] Refactor frontend into modular components: `UploadForm`, `LoadingState`, `MatchCard`, `MatchResults`, `ErrorMessage`.
+- [x] Design visual fit score badges, type indicators, deadlines, and direct application links.
+- [x] Staged progress messages during AI analysis and matching.
+- [x] Responsive design verification for both desktop and mobile viewports.
 
 ### Phase 6: Actionable Prep Checklists & Hardening (Day 6)
 - [ ] Tailored checklist generator (`POST /api/checklist`) detailing required documents, deadlines, and concrete prep steps per match.
