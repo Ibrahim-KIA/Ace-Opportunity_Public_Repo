@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const TYPE_CONFIG = {
   internship: {
@@ -18,13 +20,11 @@ const TYPE_CONFIG = {
   },
 }
 
-export default function MatchCard({ match, rank }) {
+export default function MatchCard({ match, rank, profile }) {
   const opp = match.opportunity || {}
   const rawScore = typeof match.score === 'number' ? match.score : 0.5
 
   // Normalize dense embedding score into user-friendly match percentage
-  // MiniLM cosine similarity is typically 0.30 - 0.70 for text matching
-  // Scale so 0.45+ is ~90-95%, 0.35 is ~75-80%
   let displayPercent = Math.round(Math.min(98, Math.max(50, (rawScore / 0.52) * 94)))
   if (rawScore >= 0.50) displayPercent = Math.min(99, Math.round(92 + (rawScore - 0.50) * 20))
 
@@ -36,6 +36,57 @@ export default function MatchCard({ match, rank }) {
 
   const isRolling = !opp.deadline || opp.deadline.toLowerCase() === 'rolling'
   const cardId = `match-card-${rank}`
+
+  // ─── Checklist State ────────────────────────────────────────────────────────
+  const [showChecklist, setShowChecklist] = useState(false)
+  const [checklist, setChecklist] = useState(null)
+  const [checklistLoading, setChecklistLoading] = useState(false)
+  const [checklistError, setChecklistError] = useState(null)
+  const [checkedDocs, setCheckedDocs] = useState({})
+
+  async function fetchChecklist() {
+    setChecklistLoading(true)
+    setChecklistError(null)
+
+    try {
+      const res = await fetch(`${API_URL}/api/checklist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile_id: profile?.id || profile?.profile_id,
+          profile: profile,
+          opportunity_id: opp?._id || opp?.title,
+          opportunity: opp,
+        }),
+      })
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.detail || `Server returned HTTP ${res.status}`)
+      }
+
+      const data = await res.json()
+      setChecklist(data)
+    } catch (err) {
+      setChecklistError(err.message || 'Failed to generate prep checklist')
+    } finally {
+      setChecklistLoading(false)
+    }
+  }
+
+  function handleToggleChecklist() {
+    if (!showChecklist && !checklist && !checklistLoading) {
+      fetchChecklist()
+    }
+    setShowChecklist(!showChecklist)
+  }
+
+  function toggleDoc(index) {
+    setCheckedDocs((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }))
+  }
 
   return (
     <div className="match-card" id={cardId}>
@@ -112,8 +163,25 @@ export default function MatchCard({ match, rank }) {
         </div>
       )}
 
-      {/* Footer & Apply Link */}
+      {/* Footer & Action Controls */}
       <div className="match-footer">
+        <button
+          type="button"
+          className={`btn-checklist-toggle ${showChecklist ? 'active' : ''}`}
+          onClick={handleToggleChecklist}
+          id={`checklist-btn-${rank}`}
+        >
+          {checklistLoading ? (
+            <>
+              <span className="spinner spinner-xs" /> Synthesizing Checklist...
+            </>
+          ) : showChecklist ? (
+            <>📋 Hide Prep Checklist ▲</>
+          ) : (
+            <>📋 Actionable Prep Checklist ✨</>
+          )}
+        </button>
+
         {opp.link ? (
           <a
             href={opp.link}
@@ -128,6 +196,103 @@ export default function MatchCard({ match, rank }) {
           <span className="no-link-text">Direct application link unavailable</span>
         )}
       </div>
+
+      {/* Expandable Actionable Prep Checklist Drawer */}
+      {showChecklist && (
+        <div className="checklist-drawer" id={`checklist-drawer-${rank}`}>
+          <div className="checklist-drawer-header">
+            <div className="checklist-header-title">
+              <span className="checklist-badge">AI Application Strategy</span>
+              <h4>Preparation Checklist</h4>
+            </div>
+            <p className="checklist-subtitle">
+              Personalized materials, timeline advice, and concrete action steps tailored for{' '}
+              <strong>{opp.title}</strong>.
+            </p>
+          </div>
+
+          {checklistLoading && (
+            <div className="checklist-loading-box">
+              <span className="spinner spinner-md" />
+              <p>Analyzing candidate profile and tailoring required materials...</p>
+            </div>
+          )}
+
+          {checklistError && (
+            <div className="checklist-error-box">
+              <p>⚠️ {checklistError}</p>
+              <button
+                type="button"
+                className="btn-secondary btn-sm"
+                onClick={fetchChecklist}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {checklist && !checklistLoading && (
+            <div className="checklist-content">
+              {/* Strategic Deadline Note */}
+              {checklist.deadline_note && (
+                <div className="checklist-deadline-box">
+                  <span className="deadline-box-icon">⏱️</span>
+                  <div className="deadline-box-content">
+                    <span className="deadline-box-title">Timeline &amp; Submission Strategy</span>
+                    <p className="deadline-box-text">{checklist.deadline_note}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Required Documents Interactive List */}
+              {checklist.documents && checklist.documents.length > 0 && (
+                <div className="checklist-block">
+                  <h5 className="checklist-block-title">
+                    Required Materials &amp; Documents
+                  </h5>
+                  <div className="interactive-docs-list">
+                    {checklist.documents.map((doc, idx) => {
+                      const isChecked = !!checkedDocs[idx]
+                      return (
+                        <label
+                          key={idx}
+                          className={`doc-check-item ${isChecked ? 'doc-checked' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="doc-checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleDoc(idx)}
+                          />
+                          <span className="doc-check-box-custom">
+                            {isChecked ? '✓' : ''}
+                          </span>
+                          <span className="doc-text">{doc}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Tailored Prep Tips */}
+              {checklist.tips && checklist.tips.length > 0 && (
+                <div className="checklist-block">
+                  <h5 className="checklist-block-title">Strategic Preparation Tips</h5>
+                  <div className="tips-list">
+                    {checklist.tips.map((tip, idx) => (
+                      <div key={idx} className="tip-card">
+                        <span className="tip-badge">{idx + 1}</span>
+                        <p className="tip-text">{tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

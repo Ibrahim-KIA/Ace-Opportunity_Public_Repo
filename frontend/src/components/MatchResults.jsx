@@ -191,7 +191,12 @@ export default function MatchResults({ profile, matches, onReset }) {
       {sortedMatches.length > 0 ? (
         <div className="matches-grid" id="matches-grid">
           {sortedMatches.map((match, index) => (
-            <MatchCard key={index} match={match} rank={index + 1} />
+            <MatchCard
+              key={index}
+              match={match}
+              rank={index + 1}
+              profile={profile}
+            />
           ))}
         </div>
       ) : (

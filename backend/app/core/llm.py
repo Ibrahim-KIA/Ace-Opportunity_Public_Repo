@@ -399,3 +399,199 @@ def explain_fit(profile: Dict[str, Any], opportunity: Dict[str, Any]) -> str:
             logger.warning("explain_fit_with_anthropic raised: %s", exc)
 
     return _mock_explain_fit(profile, opportunity)
+
+
+CHECKLIST_SYSTEM_PROMPT = """\
+You are an expert career mentor and opportunity application advisor.
+Given a candidate's profile and a specific opportunity (internship, scholarship, or grant), generate a structured, actionable preparation checklist.
+
+Return ONLY a valid JSON object matching the exact schema below. Do NOT output any markdown backticks, fences (e.g. ```json), or explanatory text.
+
+{
+  "documents": [
+    "<Document / Material 1 tailored with specific detail, e.g. 'Updated CV highlighting Python & FastAPI experience'>",
+    "<Document / Material 2, e.g. 'Official university transcript or enrollment verification'>",
+    "<Document / Material 3, e.g. 'Statement of Purpose addressing how your background aligns with program mission'>"
+  ],
+  "deadline_note": "<Actionable deadline guidance and submission timeline recommendation>",
+  "tips": [
+    "<Concrete action tip 1 directly addressing a strength or gap in candidate's profile for this role>",
+    "<Concrete action tip 2 regarding portfolio, essays, or code repositories>",
+    "<Concrete action tip 3 for interview or review process>"
+  ]
+}
+
+Strict Rules:
+- Output MUST be valid parseable JSON.
+- Tailor the items specifically to the requirements of the opportunity and the candidate's actual background.
+- Keep tips actionable, concrete, and concise (1-2 sentences each).
+- Provide 3 to 5 documents and 2 to 3 concrete tips.
+"""
+
+
+def _mock_generate_checklist(
+    profile: Dict[str, Any], opportunity: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Generate a realistic, tailored preparation checklist for offline or fallback mode."""
+    skills = profile.get("skills", [])
+    primary_skill = skills[0] if skills else "technical problem solving"
+    title = opportunity.get("title", "this program")
+    opp_type = (opportunity.get("type") or "internship").lower()
+    deadline = opportunity.get("deadline") or "rolling"
+
+    if deadline.lower() == "rolling":
+        deadline_text = "Rolling admissions — apply as early as possible before cohort capacity is filled."
+    else:
+        deadline_text = f"Official deadline is {deadline}. Aim to submit at least 7–10 days early to avoid portal slowdowns."
+
+    docs = [
+        f"Tailored CV/Resume highlighting your hands-on background in {primary_skill}",
+        "Official or unofficial academic transcript reflecting your coursework",
+        f"Statement of Interest / Cover Letter addressing your motivation for {title}",
+    ]
+
+    if opp_type in ("scholarship", "grant"):
+        docs.append("1–2 letters of academic or professional recommendation")
+    else:
+        docs.append("Link to technical portfolio, GitHub repository, or live project demonstrations")
+
+    tips = [
+        f"Emphasize tangible projects where you applied {primary_skill} to solve a real-world problem.",
+        f"Review the eligibility criteria for {title} and clearly articulate how your educational background qualifies you.",
+        "Request letters of recommendation or references early, sharing a brief summary of the opportunity with your referees.",
+    ]
+
+    return {
+        "documents": docs,
+        "deadline_note": deadline_text,
+        "tips": tips,
+    }
+
+
+def generate_checklist_with_gemini(
+    profile: Dict[str, Any], opportunity: Dict[str, Any], api_key: str
+) -> Dict[str, Any]:
+    """Generate structured application checklist using Google Gemini."""
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(api_key=api_key)
+
+    skills_str = ", ".join(profile.get("skills", [])) or "General STEM / academic background"
+    prompt = f"""{CHECKLIST_SYSTEM_PROMPT}
+
+Candidate Profile:
+- Name: {profile.get('name') or 'Candidate'}
+- Skills: {skills_str}
+- Summary: {profile.get('summary', '')}
+
+Opportunity:
+- Title: {opportunity.get('title', '')}
+- Organization: {opportunity.get('organization', '')}
+- Type: {opportunity.get('type', '')}
+- Eligibility: {opportunity.get('eligibility', '')}
+- Description: {opportunity.get('description', '')}
+- Deadline: {opportunity.get('deadline', 'Rolling')}
+- Tags: {', '.join(opportunity.get('tags', []))}
+
+Generate the structured JSON checklist:"""
+
+    models_to_try = [
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-3.5-flash",
+        "gemini-3.8-flash",
+    ]
+    last_error: Exception | None = None
+
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.2,
+                ),
+            )
+            raw_text = response.text or ""
+            data = _parse_json_with_retry(raw_text)
+            if isinstance(data, dict) and "documents" in data and "tips" in data:
+                return data
+        except Exception as exc:
+            last_error = exc
+            logger.warning("Gemini model %s failed in generate_checklist: %s", model_name, exc)
+            continue
+
+    if last_error:
+        logger.warning("All Gemini models failed for generate_checklist; falling back to mock")
+    return _mock_generate_checklist(profile, opportunity)
+
+
+def generate_checklist_with_anthropic(
+    profile: Dict[str, Any], opportunity: Dict[str, Any], api_key: str
+) -> Dict[str, Any]:
+    """Generate structured application checklist using Anthropic Claude."""
+    import anthropic
+
+    client = anthropic.Anthropic(api_key=api_key)
+    prompt = f"""Candidate Profile:
+- Name: {profile.get('name') or 'Candidate'}
+- Skills: {', '.join(profile.get('skills', []))}
+- Summary: {profile.get('summary', '')}
+
+Opportunity:
+- Title: {opportunity.get('title', '')}
+- Organization: {opportunity.get('organization', '')}
+- Type: {opportunity.get('type', '')}
+- Eligibility: {opportunity.get('eligibility', '')}
+- Description: {opportunity.get('description', '')}
+- Deadline: {opportunity.get('deadline', 'Rolling')}
+
+Generate structured JSON checklist:"""
+
+    try:
+        message = client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=600,
+            system=CHECKLIST_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw_text = message.content[0].text.strip()
+        data = _parse_json_with_retry(raw_text)
+        if isinstance(data, dict) and "documents" in data:
+            return data
+    except Exception as exc:
+        logger.warning("Anthropic generate_checklist failed: %s", exc)
+
+    return _mock_generate_checklist(profile, opportunity)
+
+
+def generate_checklist(
+    profile: Dict[str, Any], opportunity: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Generate tailored checklist of documents, deadline guidance, and prep tips.
+
+    Returns:
+        Dict with keys "documents" (list), "deadline_note" (str), and "tips" (list).
+    """
+    settings = get_settings()
+
+    if settings.mock_llm:
+        return _mock_generate_checklist(profile, opportunity)
+
+    gemini_key = settings.effective_gemini_key
+    if gemini_key:
+        try:
+            return generate_checklist_with_gemini(profile, opportunity, gemini_key)
+        except Exception as exc:
+            logger.warning("generate_checklist_with_gemini raised: %s", exc)
+
+    anthropic_key = settings.effective_anthropic_key
+    if anthropic_key:
+        try:
+            return generate_checklist_with_anthropic(profile, opportunity, anthropic_key)
+        except Exception as exc:
+            logger.warning("generate_checklist_with_anthropic raised: %s", exc)
+
+    return _mock_generate_checklist(profile, opportunity)
