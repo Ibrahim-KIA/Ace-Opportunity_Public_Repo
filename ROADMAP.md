@@ -68,9 +68,9 @@ Ace-Opportunity matches candidates to real scholarships, internships, and grants
 - [x] Responsive design verification for both desktop and mobile viewports.
 
 ### Phase 6: Actionable Prep Checklists & Hardening (Day 6)
-- [ ] Tailored checklist generator (`POST /api/checklist`) detailing required documents, deadlines, and concrete prep steps per match.
-- [ ] Expandable on-demand checklist drawer on match cards.
-- [ ] Hardening across diverse CV formats, edge cases, and missing profile sections.
+- [x] Tailored checklist generator (`POST /api/checklist`) detailing required documents, deadlines, and concrete prep steps per match.
+- [x] Expandable on-demand checklist drawer on match cards.
+- [x] Hardening across diverse CV formats, edge cases, and missing profile sections.
 
 ### Phase 7: Final Verification & Demo Polish (Day 7)
 - [ ] End-to-end verification of production Render and Vercel deployments.
