@@ -73,9 +73,9 @@ Ace-Opportunity matches candidates to real scholarships, internships, and grants
 - [x] Hardening across diverse CV formats, edge cases, and missing profile sections.
 
 ### Phase 7: Final Verification & Demo Polish (Day 7)
-- [ ] End-to-end verification of production Render and Vercel deployments.
-- [ ] Finalize README with UI walkthrough, architecture diagrams, and setup instructions.
-- [ ] Prepare live demo script.
+- [x] End-to-end verification of production Render and Vercel deployments.
+- [x] Finalize README with UI walkthrough, architecture diagrams, and setup instructions.
+- [x] Prepare live demo script.
 
 ---
 
