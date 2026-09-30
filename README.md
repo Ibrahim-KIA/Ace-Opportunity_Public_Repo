@@ -12,6 +12,9 @@
 [![Tests](https://img.shields.io/badge/Tests-31%2F31%20Passing-success?style=flat-square)](backend/tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
+**🔗 Live app:** https://ace-opportunity-public-repo.vercel.app
+**🔗 API:** https://ace-opportunity-public-repo.onrender.com/api/health
+
 ---
 
 ## 🌟 Overview & Problem Statement
@@ -167,7 +170,6 @@ Edit `backend/.env` with your credentials:
 ```env
 GOOGLE_API_KEY="your-gemini-api-key"
 MONGODB_URI="mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority"
-MONGODB_DB_NAME="ace_opportunity"
 CORS_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"
 MOCK_LLM=false
 ```
@@ -243,7 +245,7 @@ npm run build
 |---|---|---|---|
 | `GET` | `/api/health` | Liveness check | None |
 | `POST` | `/api/cv/upload` | Upload PDF or DOCX file, extract profile & persist | Multipart `file` (`.pdf`, `.docx`) |
-| `POST` | `/api/cv/parse` | Parse raw text string into structured profile | JSON `{ "text": "..." }` |
+| `POST` | `/api/cv/parse` | Alias of `/api/cv/upload` (same multipart file upload) | Multipart `file` (`.pdf`, `.docx`) |
 | `GET` | `/api/opportunities` | List curated opportunities (embeddings omitted) | Query: `type`, `limit`, `skip` |
 | `GET` | `/api/match/{profile_id}` | Semantic match & grounded fit explanations | Path: `profile_id`, Query: `top_k` |
 | `POST` | `/api/checklist` | Generate tailored application preparation checklist | JSON `{ "profile_id": "...", "opportunity_id": "..." }` |
@@ -257,8 +259,7 @@ npm run build
 | Variable | Required | Description |
 |---|---|---|
 | `GOOGLE_API_KEY` | **Yes** | Google Gemini API key used for profile extraction, fit explanations, and checklists. |
-| `MONGODB_URI` | **Yes** | MongoDB Atlas connection string (or local connection URI). |
-| `MONGODB_DB_NAME` | No | Database name (defaults to `ace_opportunity`). |
+| `MONGODB_URI` | **Yes** | MongoDB Atlas connection string (or local connection URI). Database name is fixed to `ace_opportunity`. |
 | `CORS_ORIGINS` | No | Comma-separated list of allowed origins (e.g. `http://localhost:5173,https://your-app.vercel.app`). |
 | `MOCK_LLM` | No | Set to `true` to run offline with mocked LLM responses during testing. |
 | `ANTHROPIC_API_KEY` | No | Optional Claude API key for secondary fallback. |
