@@ -194,7 +194,8 @@ export default function App() {
     }
   }
 
-  // Quick-test flow with sample student profile
+  // Quick-test flow: fetches a bundled sample CV and runs it through the real
+  // upload → extract → match pipeline, same as a user-provided file.
   async function handleSampleTest() {
     setLoading(true)
     setError(null)
@@ -202,40 +203,15 @@ export default function App() {
     setMatches([])
 
     try {
-      // Try existing Sarah Connor profile in MongoDB
-      const res = await fetch(`${API_URL}/api/match/6ab7ec317e261dcd945c3be3`)
-      if (res.ok) {
-        const matchData = await res.json()
-        setMatches(matchData)
-        setProfile({
-          name: 'Sarah Connor',
-          email: 'sarah.connor@example.com',
-          skills: ['Python', 'FastAPI', 'React', 'Machine Learning', 'Git', 'Robotics'],
-          summary: 'Motivated Computer Science undergraduate with hands-on full stack and machine learning development experience.',
-          interests: ['Artificial Intelligence', 'Robotics', 'Open Source Development'],
-          education: [
-            {
-              institution: 'Tech Institute',
-              degree: 'Bachelor of Science',
-              field: 'Computer Science & Robotics',
-              year: '2020–2024',
-            },
-          ],
-          experience: [
-            {
-              organisation: 'Cyberdyne Systems',
-              role: 'Software Developer Intern',
-              duration: 'Jun 2023 – Sep 2023',
-              description: 'Contributed to internal API microservices and robotics data pipelines.',
-            },
-          ],
-        })
-        setLoading(false)
-        return
+      const res = await fetch('/sample-cv-sarah-connor.docx')
+      if (!res.ok) {
+        throw new Error('Could not load the sample CV file.')
       }
-
-      // Fallback: Upload a mock CV if ID not found
-      throw new Error('Sample profile not found. Please upload a real CV file.')
+      const blob = await res.blob()
+      const file = new File([blob], 'sarah-connor-cv.docx', {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      })
+      await handleUpload(file)
     } catch (err) {
       setError(err.message)
       setLoading(false)
