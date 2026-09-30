@@ -3,7 +3,7 @@
 **Presenter:** Engineering / Product Lead  
 **Audience:** Judges, Evaluators, and Fellowship Applicants  
 **Time Limit:** ~75–90 seconds  
-**Live URL:** Production Web Application (Vercel Frontend + Render Backend)
+**Live URL:** https://ace-opportunity-public-repo.vercel.app (Vercel frontend + Render backend)
 
 ---
 
