@@ -1,18 +1,37 @@
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .core.config import get_settings
+from .core.embeddings import embed_text
 from .routers.cv import router as cv_router
 from .routes.opportunities import router as opportunities_router
 from .routes.match import router as match_router
 from .routes.checklist import router as checklist_router
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the sentence-transformers model once at boot, not on the first
+    # user request -- avoids a slow/timed-out first match call in production.
+    try:
+        embed_text("warmup")
+        logger.info("Embedding model warmed up.")
+    except Exception:
+        logger.exception("Embedding model warmup failed; will retry lazily on first use.")
+    yield
+
 
 app = FastAPI(
     title="Ace-Opportunity API",
     description="AI copilot matching CVs to real opportunities.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # Parse comma-separated origins; keep ["*"] behaviour when the env var is "*"
